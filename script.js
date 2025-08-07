@@ -13,6 +13,56 @@ class PaintApp {
         this.initializeCanvas();
         this.setupEventListeners();
         this.saveState();
+        this.updateAIButtonDisplay(); // AIボタンの表示を初期化
+    }
+    
+    // AI解析の利用制限チェック
+    checkUsageLimit() {
+        const today = new Date().toDateString();
+        const usageData = JSON.parse(localStorage.getItem('artAnalysisUsage') || '{}');
+        
+        // 日付が変わっていたらリセット
+        if (usageData.date !== today) {
+            usageData.date = today;
+            usageData.count = 0;
+            localStorage.setItem('artAnalysisUsage', JSON.stringify(usageData));
+        }
+        
+        return {
+            canUse: usageData.count < 5,
+            remainingUses: Math.max(0, 5 - usageData.count),
+            usedToday: usageData.count
+        };
+    }
+    
+    // AI解析の利用回数をインクリメント
+    incrementUsage() {
+        const today = new Date().toDateString();
+        const usageData = JSON.parse(localStorage.getItem('artAnalysisUsage') || '{}');
+        
+        usageData.date = today;
+        usageData.count = (usageData.count || 0) + 1;
+        localStorage.setItem('artAnalysisUsage', JSON.stringify(usageData));
+    }
+    
+    // AIボタンの表示を更新
+    updateAIButtonDisplay() {
+        const usageStatus = this.checkUsageLimit();
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        
+        if (!usageStatus.canUse) {
+            // 制限に達した場合
+            analyzeBtn.innerHTML = '<i class="fas fa-clock"></i> 明日またお試しください';
+            analyzeBtn.disabled = true;
+            analyzeBtn.classList.add('disabled');
+            analyzeBtn.title = '今日の利用回数を使い切りました。明日またお試しください。';
+        } else {
+            // まだ利用可能な場合
+            analyzeBtn.innerHTML = `<i class="fas fa-robot"></i> AIにみてもらう (残り${usageStatus.remainingUses}回)`;
+            analyzeBtn.disabled = false;
+            analyzeBtn.classList.remove('disabled');
+            analyzeBtn.title = `AI解析を実行します。今日はあと${usageStatus.remainingUses}回利用できます。`;
+        }
     }
 
     initializeCanvas() {
@@ -299,6 +349,45 @@ class PaintApp {
     }
 
     async analyzeArt() {
+        // 利用制限チェック
+        const usageStatus = this.checkUsageLimit();
+        
+        if (!usageStatus.canUse) {
+            // 制限に達した場合のメッセージ
+            const modal = document.getElementById('analysisModal');
+            const resultDiv = document.getElementById('analysisResult');
+            const artworkPreview = document.getElementById('artworkPreview');
+            
+            this.displayArtworkInFrame(artworkPreview);
+            modal.style.display = 'block';
+            
+            resultDiv.innerHTML = `
+                <div class="limit-reached">
+                    <i class="fas fa-clock" style="font-size: 48px; color: #FF6B9D; margin-bottom: 20px;"></i>
+                    <h3 style="color: #FF6B9D; margin-bottom: 15px;">今日の利用回数を使い切りました</h3>
+                    <p style="font-size: 18px; line-height: 1.6; color: #666;">
+                        AI解析は1日に5回までご利用いただけます。<br>
+                        明日またお試しください！
+                    </p>
+                    <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+                        <p style="margin: 0; color: #888;">
+                            今日の利用回数: <strong>${usageStatus.usedToday}/5回</strong>
+                        </p>
+                    </div>
+                </div>
+            `;
+            
+            // Vercel Analytics: 制限達成イベント
+            if (typeof window.va === 'function') {
+                window.va('track', 'AI Analysis Limit Reached', {
+                    usedToday: usageStatus.usedToday,
+                    timestamp: new Date().toISOString()
+                });
+            }
+            
+            return;
+        }
+        
         const modal = document.getElementById('analysisModal');
         const resultDiv = document.getElementById('analysisResult');
         const artworkPreview = document.getElementById('artworkPreview');
@@ -312,37 +401,11 @@ class PaintApp {
             <div class="loading">
                 <i class="fas fa-spinner fa-spin"></i>
                 <p>AIが作品を解析中です...</p>
+                <p style="font-size: 14px; color: #888; margin-top: 10px;">
+                    残り回数: ${usageStatus.remainingUses - 1}回 (今日)
+                </p>
             </div>
         `;
-
-        // 利用制限チェック関数
-        this.checkUsageLimit = function() {
-            const today = new Date().toDateString();
-            const usageData = JSON.parse(localStorage.getItem('artAnalysisUsage') || '{}');
-            
-            // 日付が変わっていたらリセット
-            if (usageData.date !== today) {
-                usageData.date = today;
-                usageData.count = 0;
-                localStorage.setItem('artAnalysisUsage', JSON.stringify(usageData));
-            }
-            
-            return {
-                canUse: usageData.count < 5,
-                remainingUses: Math.max(0, 5 - usageData.count),
-                usedToday: usageData.count
-            };
-        };
-        
-        // 利用回数をインクリメント
-        this.incrementUsage = function() {
-            const today = new Date().toDateString();
-            const usageData = JSON.parse(localStorage.getItem('artAnalysisUsage') || '{}');
-            
-            usageData.date = today;
-            usageData.count = (usageData.count || 0) + 1;
-            localStorage.setItem('artAnalysisUsage', JSON.stringify(usageData));
-        };
         
         // Vercel Analytics: AI解析開始イベント
         if (typeof window.va === 'function') {
@@ -398,11 +461,19 @@ class PaintApp {
                 const title = lines[0]; // 最初の行をタイトルとして使用
                 const content = lines.slice(1).join('<br>'); // 残りを本文として使用（タイトルを除く）
                 
+                // 利用回数をインクリメント
+                this.incrementUsage();
+                
+                // 更新された利用状況を取得
+                const updatedUsageStatus = this.checkUsageLimit();
+                
                 // Vercel Analytics: AI解析成功イベント
                 if (typeof window.va === 'function') {
                     window.va('track', 'AI Analysis Success', {
                         titleLength: title.length,
                         contentLength: content.length,
+                        remainingUses: updatedUsageStatus.remainingUses,
+                        usedToday: updatedUsageStatus.usedToday,
                         timestamp: new Date().toISOString()
                     });
                 }
@@ -411,11 +482,19 @@ class PaintApp {
                     <div class="analysis-content">
                         <div class="analysis-title">${title}</div>
                         <div class="analysis-text">${content}</div>
+                        <div class="usage-info" style="margin-top: 15px; padding: 10px; background: #f0f8ff; border-radius: 8px; font-size: 14px; color: #666;">
+                            <i class="fas fa-info-circle" style="color: #4ECDC4;"></i>
+                            今日の利用回数: <strong>${updatedUsageStatus.usedToday}/5回</strong>
+                            ${updatedUsageStatus.remainingUses > 0 ? `(残り${updatedUsageStatus.remainingUses}回)` : '(明日またお試しください)'}
+                        </div>
                     </div>
                 `;
                 
                 // シェア機能を表示して初期化（タイトルと本文を分けて渡す）
                 this.showShareButtons(title, content);
+                
+                // AIボタンの表示を更新
+                this.updateAIButtonDisplay();
             } else {
                 // Vercel Analytics: AI解析エラーイベント
                 if (typeof window.va === 'function') {
