@@ -394,9 +394,9 @@ class PaintApp {
             if (response.ok) {
                 // 成功時の表示
                 const analysisText = data.analysis;
-                const lines = analysisText.split('\n');
+                const lines = analysisText.split('\n').filter(line => line.trim() !== ''); // 空行を除去
                 const title = lines[0]; // 最初の行をタイトルとして使用
-                const content = lines.slice(1).join('<br>'); // 残りを本文として使用
+                const content = lines.slice(1).join('<br>'); // 残りを本文として使用（タイトルを除く）
                 
                 // Vercel Analytics: AI解析成功イベント
                 if (typeof window.va === 'function') {
@@ -414,8 +414,8 @@ class PaintApp {
                     </div>
                 `;
                 
-                // シェア機能を表示して初期化
-                this.showShareButtons(title, analysisText);
+                // シェア機能を表示して初期化（タイトルと本文を分けて渡す）
+                this.showShareButtons(title, content);
             } else {
                 // Vercel Analytics: AI解析エラーイベント
                 if (typeof window.va === 'function') {
@@ -673,7 +673,9 @@ class PaintApp {
             });
         }
         
-        const shareText = `🎨 Little Artists Studioで作品を描きました！\n\n「${title}」\n\n${description.substring(0, 100)}...\n\n#LittleArtistsStudio #子どもお絵かき #AI褒めコメント\n\nhttps://little-artists-studio.vercel.app`;
+        // HTMLタグを除去してテキストのみを取得
+        const cleanDescription = description.replace(/<br>/g, ' ').replace(/<[^>]*>/g, '').trim();
+        const shareText = `🎨 Little Artists Studioで作品を描きました！\n\n${title}\n\n${cleanDescription.substring(0, 80)}...\n\n#LittleArtistsStudio #子どもお絵かき #AI褒めコメント\n\nhttps://little-artists-studio.vercel.app`;
         const encodedText = encodeURIComponent(shareText);
         const twitterUrl = `https://twitter.com/intent/tweet?text=${encodedText}`;
         window.open(twitterUrl, '_blank', 'width=600,height=400');
