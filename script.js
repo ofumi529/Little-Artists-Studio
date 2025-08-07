@@ -307,28 +307,14 @@ class PaintApp {
             localStorage.setItem('artAnalysisUsage', JSON.stringify(usageData));
         };
         
-        // 利用制限チェック
-        const usageStatus = this.checkUsageLimit();
-        if (!usageStatus.canUse) {
-            resultDiv.innerHTML = `
-                <div class="error-message">
-                    <h3>✨ 今日の利用上限に達しました</h3>
-                    <p>アート解析機能は1日に5回までご利用いただけます。</p>
-                    <p>明日またお試しください。</p>
-                    <p><small>今日の利用回数: ${usageStatus.usedToday}/5回</small></p>
-                </div>
-            `;
-            return;
-        }
-        
         // Canvasから画像データを取得
         const imageData = this.canvas.toDataURL('image/png');
         
-        // ローディング表示（残り回数も表示）
+        // ローディング表示
         resultDiv.innerHTML = `
-            <div class="loading">
-                アートを解析中...<br>
-                <small>残り利用回数: ${usageStatus.remainingUses - 1}/5回</small>
+            <div class="loading-message">
+                <i class="fas fa-palette fa-spin"></i>
+                アートを解析中...
             </div>
         `;
         
@@ -362,10 +348,6 @@ class PaintApp {
             }
             
             if (response.ok) {
-                // 利用回数をインクリメント
-                this.incrementUsage();
-                const newUsageStatus = this.checkUsageLimit();
-                
                 // 成功時の表示
                 const analysisText = data.analysis;
                 const lines = analysisText.split('\n');
@@ -376,9 +358,6 @@ class PaintApp {
                     <div class="analysis-content">
                         <div class="analysis-title">${title}</div>
                         <div class="analysis-text">${content}</div>
-                        <div class="usage-info">
-                            <small>🎆 今日の利用回数: ${newUsageStatus.usedToday}/5回 ・ 残り: ${newUsageStatus.remainingUses}回</small>
-                        </div>
                     </div>
                 `;
                 
