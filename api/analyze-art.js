@@ -106,7 +106,7 @@ module.exports = async function handler(req, res) {
         } else if (error.response?.status === 401) {
             res.status(401).json({ 
                 error: 'Claude APIキーが無効です。管理者にお問い合わせください。',
-                debug: 'Invalid API key'
+                debug: `Invalid API key - Key length: ${apiKey ? apiKey.length : 0}, Starts with: ${apiKey ? apiKey.substring(0, 12) + '...' : 'null'}`
             });
         } else if (error.response?.status === 429) {
             res.status(429).json({ 
