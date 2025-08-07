@@ -29,7 +29,7 @@ module.exports = async function handler(req, res) {
             VERCEL_ENV: process.env.VERCEL_ENV,
             NODE_VERSION: process.version
         });
-        console.log('APIキー設定状況:', process.env.CLAUDE_API_KEY ? `設定済み(長さ: ${process.env.CLAUDE_API_KEY.length})` : '未設定');
+        console.log('APIキー設定状況:', process.env.ANTHROPIC_API_KEY ? `設定済み(長さ: ${process.env.ANTHROPIC_API_KEY.length})` : '未設定');
         console.log('リクエストメソッド:', req.method);
         console.log('リクエストURL:', req.url);
 
@@ -37,12 +37,12 @@ module.exports = async function handler(req, res) {
         console.log('画像データ受信:', imageData ? 'あり' : 'なし');
         
         // APIキーの検証を強化
-        const apiKey = process.env.CLAUDE_API_KEY;
+        const apiKey = process.env.ANTHROPIC_API_KEY;
         if (!apiKey) {
-            console.log('エラー: CLAUDE_API_KEYが設定されていません');
+            console.log('エラー: ANTHROPIC_API_KEYが設定されていません');
             return res.status(500).json({ 
                 error: 'AI解析サービスの設定が完了していません。管理者にお問い合わせください。',
-                debug: 'CLAUDE_API_KEY not set'
+                debug: 'ANTHROPIC_API_KEY not set'
             });
         }
         
