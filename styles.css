@@ -1,0 +1,787 @@
+/* リセットとベーススタイル */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #FFE4E1 0%, #FFB6C1 25%, #87CEEB 50%, #98FB98 100%);
+    min-height: 100vh;
+    color: #333;
+}
+
+/* アプリケーションコンテナ */
+.app-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: white;
+    min-height: 100vh;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+}
+
+/* ヘッダー */
+.app-header {
+    background: linear-gradient(135deg, #FF69B4 0%, #FFB347 50%, #87CEEB 100%);
+    color: white;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+    border: 3px solid #FFF;
+    border-radius: 15px 15px 0 0;
+}
+
+.app-header h1 {
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+
+.app-header h1 i {
+    margin-right: 0.5rem;
+}
+
+.header-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+/* メインコンテンツ */
+.main-content {
+    display: flex;
+    height: calc(100vh - 80px);
+}
+
+/* ツールバー */
+.toolbar {
+    width: 280px;
+    background: linear-gradient(180deg, #D2B48C 0%, #DEB887 50%, #F5DEB3 100%);
+    border-right: 3px solid #8B4513;
+    padding: 1.5rem;
+    overflow-y: auto;
+    box-shadow: 2px 0 15px rgba(0, 0, 0, 0.3);
+}
+
+.tool-group {
+    margin-bottom: 2rem;
+}
+
+.tool-group h3 {
+    font-size: 1rem;
+    color: #8B4513;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* ツールボタン */
+.tool-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.tool-btn {
+    width: 50px;
+    height: 50px;
+    border: 2px solid #CD853F;
+    background: #F5E6D3;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: #8B4513;
+    transition: all 0.3s ease;
+}
+
+.tool-btn:hover {
+    border-color: #FF69B4;
+    color: #FF69B4;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.4);
+    background: #FFE4E1;
+}
+
+.tool-btn.active {
+    border-color: #FF69B4;
+    background: #FF69B4;
+    color: white;
+    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.4);
+}
+
+/* カラーパレット */
+.color-palette {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.color-swatch {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.color-swatch:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.color-swatch.active {
+    border-color: #FF69B4;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.4);
+}
+
+.color-swatch.active::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* カスタムカラー */
+.custom-color {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+#colorPicker {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 0;
+}
+
+.custom-color label {
+    font-size: 0.9rem;
+    color: #8B4513;
+    font-weight: 500;
+}
+
+/* ブラシサイズ */
+.brush-size-control {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+#brushSize {
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: #DEB887;
+    outline: none;
+    cursor: pointer;
+}
+
+#brushSize::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #8B4513;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(139, 69, 19, 0.4);
+}
+
+#brushSizeValue {
+    font-size: 0.9rem;
+    color: #8B4513;
+    font-weight: 500;
+    text-align: center;
+}
+
+.brush-preview {
+    width: 60px;
+    height: 60px;
+    border: 2px dashed #CD853F;
+    border-radius: 50%;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.brush-preview::after {
+    content: '';
+    background: #8B4513;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+/* アクションボタン */
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* ボタンスタイル */
+.btn {
+    padding: 0.75rem 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #FF69B4 0%, #FF1493 100%);
+    color: white;
+}
+
+.btn-secondary {
+    background: #32CD32;
+    color: white;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #FF6347 0%, #FF4500 100%);
+    color: white;
+}
+
+.btn-ai {
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    color: #333;
+    border: 2px solid #FF69B4;
+    font-weight: bold;
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* キャンバス領域 */
+.canvas-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: linear-gradient(135deg, #F5DEB3 0%, #DEB887 100%);
+}
+
+#paintCanvas {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    cursor: crosshair;
+    max-width: 100%;
+    max-height: 100%;
+    touch-action: none; /* タッチ操作でのスクロールを防止 */
+    -webkit-touch-callout: none; /* 長押しメニューを無効化 */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+#paintCanvas.eraser-cursor {
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="black" stroke-width="2"/></svg>') 12 12, auto;
+}
+
+/* モーダル */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background-color: #FFF8DC;
+    margin: 5% auto;
+    padding: 0;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 20px 60px rgba(255, 105, 180, 0.3);
+    animation: modalSlideIn 0.3s ease;
+    border: 4px solid #FF69B4;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #FF69B4 0%, #FFB347 50%, #87CEEB 100%);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 20px 20px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+}
+
+.modal-close:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.modal-body {
+    padding: 2rem;
+    color: #333;
+}
+
+.loading {
+    text-align: center;
+    padding: 2rem;
+    color: #FF69B4;
+}
+
+.loading i {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #FF69B4;
+}
+
+#analysisResult {
+    line-height: 1.6;
+    font-size: 1rem;
+    color: #333;
+}
+
+#analysisResult h3 {
+    color: #FF69B4;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.analysis-text {
+    color: #333;
+    line-height: 1.6;
+    text-align: left;
+}
+
+.analysis-content {
+    text-align: center;
+}
+
+.analysis-title {
+    font-size: 1.4rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #FF69B4;
+    line-height: 1.3;
+}
+
+.analysis-content .analysis-text {
+    display: inline-block;
+    text-align: left;
+    max-width: 100%;
+}
+
+/* 古典的な額縁スタイル */
+.artwork-display {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.classical-frame {
+    position: relative;
+    display: inline-block;
+    padding: 12px;
+    background: linear-gradient(135deg, #FF69B4 0%, #FFB347 25%, #87CEEB 50%, #98FB98 75%, #FFD700 100%);
+    border-radius: 15px;
+    box-shadow: 
+        0 0 0 2px #FF1493,
+        0 0 0 4px #FF69B4,
+        0 0 0 6px #FFB347,
+        0 6px 20px rgba(255, 105, 180, 0.3),
+        inset 0 0 15px rgba(255, 105, 180, 0.2);
+}
+
+.frame-outer {
+    padding: 8px;
+    background: linear-gradient(45deg, #87CEEB 0%, #98FB98 50%, #FFD700 100%);
+    border-radius: 10px;
+    box-shadow: 
+        inset 0 0 10px rgba(255, 105, 180, 0.3),
+        inset 0 0 3px rgba(0, 0, 0, 0.1);
+}
+
+.frame-inner {
+    padding: 6px;
+    background: linear-gradient(225deg, #FFB347 0%, #FF69B4 50%, #87CEEB 100%);
+    border-radius: 8px;
+    box-shadow: 
+        inset 0 0 8px rgba(0, 0, 0, 0.15),
+        0 0 3px rgba(255, 105, 180, 0.4);
+}
+
+#artworkPreview {
+    display: block;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    max-width: 400px;
+    max-height: 300px;
+    background: white;
+}
+
+#analysisResult p {
+    margin-bottom: 1rem;
+}
+
+/* レスポンシブデザイン */
+@media (max-width: 768px) {
+    .app-header {
+        padding: 0.75rem;
+        flex-direction: column;
+        gap: 0.75rem;
+        text-align: center;
+    }
+    
+    .app-header h1 {
+        font-size: 1.5rem;
+        margin: 0;
+    }
+    
+    .header-actions {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .main-content {
+        flex-direction: column;
+        height: auto;
+        gap: 0;
+    }
+    
+    .toolbar {
+        width: 100%;
+        padding: 0.75rem;
+        border-right: none;
+        border-bottom: 1px solid #e9ecef;
+        order: 2; /* ツールバーをキャンバスの下に */
+    }
+    
+    .canvas-container {
+        padding: 1rem;
+        order: 1; /* キャンバスを上に */
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+    }
+    
+    #paintCanvas {
+        max-width: 100%;
+        height: auto;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .tool-group {
+        margin-bottom: 0.75rem;
+    }
+    
+    .tool-group h3 {
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .tool-buttons {
+        gap: 0.5rem;
+    }
+    
+    .tool-btn {
+        width: 35px;
+        height: 35px;
+        font-size: 0.9rem;
+    }
+    
+    .color-palette {
+        grid-template-columns: repeat(10, 1fr);
+        gap: 0.25rem;
+    }
+    
+    .color-swatch {
+        width: 25px;
+        height: 25px;
+    }
+    
+    .action-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+    }
+    
+    .btn {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.85rem;
+        white-space: nowrap;
+    }
+    
+    .brush-controls {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .brush-controls label {
+        font-size: 0.85rem;
+        min-width: auto;
+    }
+    
+    #brushSize {
+        flex: 1;
+    }
+    
+    .usage-info {
+        margin-top: 0.75rem;
+        padding: 0.5rem;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .app-header {
+        padding: 0.5rem;
+    }
+    
+    .app-header h1 {
+        font-size: 1.3rem;
+    }
+    
+    .canvas-container {
+        padding: 0.75rem;
+    }
+    
+    .toolbar {
+        padding: 0.5rem;
+    }
+    
+    .tool-group {
+        margin-bottom: 0.5rem;
+    }
+    
+    .tool-group h3 {
+        font-size: 0.85rem;
+    }
+    
+    .tool-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 0.8rem;
+    }
+    
+    .color-palette {
+        grid-template-columns: repeat(12, 1fr);
+    }
+    
+    .color-swatch {
+        width: 22px;
+        height: 22px;
+    }
+    
+    .btn {
+        padding: 0.5rem 0.6rem;
+        font-size: 0.8rem;
+    }
+    
+    .brush-controls label {
+        font-size: 0.8rem;
+    }
+    
+    .modal-content {
+        width: 95%;
+        margin: 5% auto;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+    
+    .modal-body {
+        padding: 0.75rem;
+    }
+    
+    .modal-body h2 {
+        font-size: 1.2rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    #artworkPreview {
+        max-width: 100%;
+        max-height: 200px;
+    }
+    
+    .usage-info {
+        font-size: 0.8rem;
+        padding: 0.4rem;
+    }
+}
+
+/* 利用制限関連のスタイル */
+.usage-info {
+    margin-top: 1rem;
+    padding: 0.8rem;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: #666;
+    text-align: center;
+}
+
+/* シェア機能スタイル */
+.share-buttons {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #F5F5DC 0%, #F0E68C 100%);
+    border-radius: 12px;
+    border: 2px solid #DAA520;
+}
+
+.share-buttons h3 {
+    margin: 0 0 1rem 0;
+    color: #8B4513;
+    font-size: 1.2rem;
+    text-align: center;
+}
+
+.share-button-group {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+
+.share-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.download-btn {
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    color: white;
+}
+
+.download-btn:hover {
+    background: linear-gradient(135deg, #45a049, #3d8b40);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.twitter-btn {
+    background: linear-gradient(135deg, #1DA1F2, #0d8bd9);
+    color: white;
+}
+
+.twitter-btn:hover {
+    background: linear-gradient(135deg, #0d8bd9, #0a7bc4);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.share-preview {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.share-preview canvas {
+    max-width: 100%;
+    height: auto;
+    border: 3px solid #FF69B4;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(255, 105, 180, 0.3);
+}
+
+.usage-info small {
+    color: #495057;
+    font-weight: 500;
+}
+
+.error-message {
+    text-align: center;
+    padding: 2rem;
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    border: 2px solid #ffc107;
+    border-radius: 12px;
+    color: #856404;
+}
+
+.error-message h3 {
+    color: #d39e00;
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.error-message p {
+    margin-bottom: 0.75rem;
+    line-height: 1.6;
+}
+
+.error-message small {
+    color: #6c757d;
+    font-weight: 500;
+}
