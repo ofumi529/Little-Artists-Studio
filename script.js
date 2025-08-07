@@ -453,29 +453,34 @@ class PaintApp {
         shareCanvas.width = 1200;
         shareCanvas.height = 630;
         
-        // 背景グラデーション
+        // 子ども向けパステル背景グラデーション
         const gradient = ctx.createLinearGradient(0, 0, 1200, 630);
-        gradient.addColorStop(0, '#F5DEB3');
-        gradient.addColorStop(0.5, '#DEB887');
-        gradient.addColorStop(1, '#CD853F');
+        gradient.addColorStop(0, '#FFE4E6'); // 薄いピンク
+        gradient.addColorStop(0.3, '#E0F2FE'); // 薄い水色
+        gradient.addColorStop(0.6, '#F0FDF4'); // 薄い緑
+        gradient.addColorStop(1, '#FEF3C7'); // 薄い黄色
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, 1200, 630);
         
-        // 装飾的な枠線
-        ctx.strokeStyle = '#8B4513';
-        ctx.lineWidth = 8;
-        ctx.strokeRect(20, 20, 1160, 590);
+        // カラフルな虹色枠線
+        const rainbowColors = ['#FF6B9D', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD'];
+        for (let i = 0; i < 6; i++) {
+            ctx.strokeStyle = rainbowColors[i];
+            ctx.lineWidth = 4;
+            ctx.strokeRect(20 + i * 3, 20 + i * 3, 1160 - i * 6, 590 - i * 6);
+        }
         
-        // 内側の枠線
-        ctx.strokeStyle = '#A0522D';
-        ctx.lineWidth = 4;
-        ctx.strokeRect(40, 40, 1120, 550);
-        
-        // アプリタイトル
-        ctx.fillStyle = '#8B4513';
-        ctx.font = 'bold 32px serif';
+        // アプリタイトル（子ども向け）
+        ctx.fillStyle = '#FF6B9D';
+        ctx.font = 'bold 36px "Comic Sans MS", cursive, sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText('🎨 アトリエ マエストロ', 600, 80);
+        // タイトルに影効果
+        ctx.shadowColor = 'rgba(0,0,0,0.3)';
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 2;
+        ctx.shadowBlur = 4;
+        ctx.fillText('🎨 Little Artists Studio ✨', 600, 85);
+        ctx.shadowColor = 'transparent'; // 影をリセット
         
         // 作品エリア（左側）
         const artworkX = 80;
@@ -483,12 +488,12 @@ class PaintApp {
         const artworkWidth = 400;
         const artworkHeight = 300;
         
-        // 額縁効果
-        ctx.fillStyle = '#8B4513';
+        // カラフルな額縁効果
+        ctx.fillStyle = '#FF6B9D'; // ピンク
         ctx.fillRect(artworkX - 15, artworkY - 15, artworkWidth + 30, artworkHeight + 30);
-        ctx.fillStyle = '#A0522D';
+        ctx.fillStyle = '#4ECDC4'; // ターコイズ
         ctx.fillRect(artworkX - 10, artworkY - 10, artworkWidth + 20, artworkHeight + 20);
-        ctx.fillStyle = '#CD853F';
+        ctx.fillStyle = '#FFEAA7'; // 黄色
         ctx.fillRect(artworkX - 5, artworkY - 5, artworkWidth + 10, artworkHeight + 10);
         
         // 白い背景
@@ -515,9 +520,9 @@ class PaintApp {
         const textY = 140;
         const textWidth = 620;
         
-        // タイトル
-        ctx.fillStyle = '#8B4513';
-        ctx.font = 'bold 28px serif';
+        // タイトル（子ども向けフォント）
+        ctx.fillStyle = '#FF6B9D';
+        ctx.font = 'bold 32px "Comic Sans MS", cursive, sans-serif';
         ctx.textAlign = 'left';
         const titleLines = this.wrapText(ctx, title, textWidth, 32);
         let currentY = textY;
@@ -526,10 +531,10 @@ class PaintApp {
             currentY += 36;
         });
         
-        // 解説文
+        // 解説文（読みやすいフォント）
         currentY += 15;
-        ctx.fillStyle = '#654321';
-        ctx.font = '18px serif';
+        ctx.fillStyle = '#2D3748';
+        ctx.font = '20px "Comic Sans MS", cursive, sans-serif';
         const descLines = this.wrapText(ctx, description, textWidth, 22);
         const maxDescLines = Math.min(descLines.length, 12); // 最大12行
         for (let i = 0; i < maxDescLines; i++) {
@@ -537,10 +542,10 @@ class PaintApp {
             currentY += 28;
         }
         
-        // ハッシュタグ
-        ctx.fillStyle = '#8B4513';
-        ctx.font = 'bold 18px sans-serif';
-        ctx.fillText('#アトリエマエストロ #AI絵画解析 #デジタルアート', textX, 580);
+        // ハッシュタグ（更新）
+        ctx.fillStyle = '#4ECDC4';
+        ctx.font = 'bold 18px "Comic Sans MS", cursive, sans-serif';
+        ctx.fillText('#LittleArtistsStudio #子どもお絵かき #AI褒めコメント', textX, 580);
         
         return shareCanvas;
     }
