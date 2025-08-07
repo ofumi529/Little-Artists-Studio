@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OGP画像生成</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        #canvas {
+            border: 2px solid #333;
+            display: block;
+            margin: 20px auto;
+        }
+        .controls {
+            text-align: center;
+            margin: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 5px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background: #FF69B4;
+            color: white;
+        }
+        button:hover {
+            background: #FF1493;
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <h1>Little Artists Studio - OGP画像生成</h1>
+        <button onclick="generateOGPImage()">OGP画像を生成</button>
+        <button onclick="downloadImage()">PNG画像をダウンロード</button>
+    </div>
+    
+    <canvas id="canvas" width="1200" height="630"></canvas>
+    
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        function generateOGPImage() {
+            // 背景グラデーション
+            const gradient = ctx.createLinearGradient(0, 0, 1200, 630);
+            gradient.addColorStop(0, '#FFE4E6');
+            gradient.addColorStop(0.3, '#E0F2FE');
+            gradient.addColorStop(0.6, '#F0FDF4');
+            gradient.addColorStop(1, '#FEF3C7');
+            
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 1200, 630);
+            
+            // 虹色の枠線（6重）
+            const colors = ['#FF69B4', '#FFB347', '#87CEEB', '#98FB98', '#DDA0DD', '#F0E68C'];
+            for (let i = 0; i < 6; i++) {
+                ctx.strokeStyle = colors[i];
+                ctx.lineWidth = 8;
+                ctx.strokeRect(20 + i * 8, 20 + i * 8, 1200 - 40 - i * 16, 630 - 40 - i * 16);
+            }
+            
+            // タイトル
+            ctx.fillStyle = '#FF69B4';
+            ctx.font = 'bold 72px "Comic Sans MS", cursive, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('🎨 Little Artists Studio ✨', 600, 150);
+            
+            // サブタイトル（日本語）
+            ctx.fillStyle = '#4ECDC4';
+            ctx.font = 'bold 48px "Comic Sans MS", cursive, sans-serif';
+            ctx.fillText('子ども向けAIお絵かきアプリ', 600, 220);
+            
+            // 説明文
+            ctx.fillStyle = '#8B4513';
+            ctx.font = '36px "Comic Sans MS", cursive, sans-serif';
+            ctx.fillText('子どもの絵をAIが褒めてくれる！', 600, 300);
+            ctx.fillText('小学3年生までの漢字で優しいコメント', 600, 350);
+            ctx.fillText('『すごいね！』から始まる温かい励まし', 600, 400);
+            
+            // パレットとブラシのイラスト
+            // パレット
+            ctx.fillStyle = '#F5DEB3';
+            ctx.beginPath();
+            ctx.ellipse(200, 500, 80, 60, 0, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.strokeStyle = '#8B4513';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+            
+            // パレットの色
+            const paletteColors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF'];
+            for (let i = 0; i < 5; i++) {
+                ctx.fillStyle = paletteColors[i];
+                ctx.beginPath();
+                const angle = (i * Math.PI * 2) / 5;
+                const x = 200 + Math.cos(angle) * 40;
+                const y = 500 + Math.sin(angle) * 30;
+                ctx.arc(x, y, 12, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+            
+            // ブラシ
+            ctx.fillStyle = '#8B4513';
+            ctx.fillRect(980, 450, 15, 100);
+            ctx.fillStyle = '#FFD700';
+            ctx.fillRect(975, 440, 25, 20);
+            ctx.fillStyle = '#FF69B4';
+            ctx.beginPath();
+            ctx.arc(987, 430, 8, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // ハッシュタグ
+            ctx.fillStyle = '#4ECDC4';
+            ctx.font = 'bold 24px "Comic Sans MS", cursive, sans-serif';
+            ctx.fillText('#LittleArtistsStudio #子どもお絵かき #AI褒めコメント', 600, 580);
+        }
+        
+        function downloadImage() {
+            const link = document.createElement('a');
+            link.download = 'ogp-image.png';
+            link.href = canvas.toDataURL('image/png');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        // ページ読み込み時に画像を生成
+        window.onload = function() {
+            generateOGPImage();
+        };
+    </script>
+</body>
+</html>
