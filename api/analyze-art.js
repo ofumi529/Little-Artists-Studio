@@ -82,7 +82,7 @@ module.exports = async function handler(req, res) {
             }, {
                 headers: {
                     'Content-Type': 'application/json',
-                    'x-api-key': process.env.CLAUDE_API_KEY,
+                    'x-api-key': apiKey,
                     'anthropic-version': '2023-06-01'
                 }
             });
