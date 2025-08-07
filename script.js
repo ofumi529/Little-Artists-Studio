@@ -784,7 +784,7 @@ class PaintApp {
         
         // 新しいイベントリスナーを追加
         document.getElementById('downloadImageBtn').addEventListener('click', () => {
-            this.downloadShareImage(shareCanvas, `atelier-maestro-${Date.now()}.png`);
+            this.downloadShareImage(shareCanvas, `little-artists-studio-${Date.now()}.png`);
         });
         
         document.getElementById('shareTwitterBtn').addEventListener('click', () => {
