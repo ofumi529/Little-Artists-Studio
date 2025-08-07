@@ -8,6 +8,7 @@ class PaintApp {
         this.brushSize = 5;
         this.history = [];
         this.historyStep = -1;
+        this.drawingSessionStarted = false;
         
         this.initializeCanvas();
         this.setupEventListeners();
@@ -116,6 +117,18 @@ class PaintApp {
 
     startDrawing(e) {
         this.isDrawing = true;
+        
+        // Vercel Analytics: 描画開始イベント
+        if (typeof window.va === 'function' && !this.drawingSessionStarted) {
+            window.va('track', 'Drawing Started', {
+                tool: this.currentTool,
+                color: this.currentColor,
+                brushSize: this.brushSize,
+                timestamp: new Date().toISOString()
+            });
+            this.drawingSessionStarted = true;
+        }
+        
         const rect = this.canvas.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
@@ -151,9 +164,18 @@ class PaintApp {
     }
 
     selectTool(tool) {
+        // Vercel Analytics: ツール変更イベント
+        if (typeof window.va === 'function' && this.currentTool !== tool) {
+            window.va('track', 'Tool Changed', {
+                previousTool: this.currentTool,
+                newTool: tool,
+                timestamp: new Date().toISOString()
+            });
+        }
+        
         this.currentTool = tool;
         
-        // ツールボタンの状態更新
+        // ボタンの状態更新
         document.querySelectorAll('.tool-btn').forEach(btn => {
             btn.classList.remove('active');
         });
@@ -247,16 +269,31 @@ class PaintApp {
 
     clearCanvas() {
         if (confirm('キャンバスをクリアしますか？この操作は元に戻せません。')) {
+            // Vercel Analytics: キャンバスクリアイベント
+            if (typeof window.va === 'function') {
+                window.va('track', 'Canvas Cleared', {
+                    timestamp: new Date().toISOString()
+                });
+            }
+            
             this.ctx.fillStyle = 'white';
             this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+            this.drawingSessionStarted = false; // 描画セッションをリセット
             this.saveState();
         }
     }
 
     saveImage() {
+        // Vercel Analytics: 画像保存イベント
+        if (typeof window.va === 'function') {
+            window.va('track', 'Artwork Saved', {
+                timestamp: new Date().toISOString()
+            });
+        }
+        
         const link = document.createElement('a');
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
-        link.download = `artwork-${timestamp}.png`;
+        link.download = `little-artists-studio-${timestamp}.png`;
         link.href = this.canvas.toDataURL();
         link.click();
     }
@@ -307,6 +344,13 @@ class PaintApp {
             localStorage.setItem('artAnalysisUsage', JSON.stringify(usageData));
         };
         
+        // Vercel Analytics: AI解析開始イベント
+        if (typeof window.va === 'function') {
+            window.va('track', 'AI Analysis Started', {
+                timestamp: new Date().toISOString()
+            });
+        }
+        
         // Canvasから画像データを取得
         const imageData = this.canvas.toDataURL('image/png');
         
@@ -354,6 +398,15 @@ class PaintApp {
                 const title = lines[0]; // 最初の行をタイトルとして使用
                 const content = lines.slice(1).join('<br>'); // 残りを本文として使用
                 
+                // Vercel Analytics: AI解析成功イベント
+                if (typeof window.va === 'function') {
+                    window.va('track', 'AI Analysis Success', {
+                        titleLength: title.length,
+                        contentLength: content.length,
+                        timestamp: new Date().toISOString()
+                    });
+                }
+                
                 resultDiv.innerHTML = `
                     <div class="analysis-content">
                         <div class="analysis-title">${title}</div>
@@ -364,6 +417,15 @@ class PaintApp {
                 // シェア機能を表示して初期化
                 this.showShareButtons(title, analysisText);
             } else {
+                // Vercel Analytics: AI解析エラーイベント
+                if (typeof window.va === 'function') {
+                    window.va('track', 'AI Analysis Error', {
+                        errorCode: response.status,
+                        errorMessage: data.error,
+                        timestamp: new Date().toISOString()
+                    });
+                }
+                
                 // エラー時の表示
                 resultDiv.innerHTML = `
                     <div class="error-content">
@@ -583,7 +645,15 @@ class PaintApp {
     }
     
     // 画像をダウンロード
-    downloadShareImage(canvas, filename = 'atelier-maestro-artwork.png') {
+    downloadShareImage(canvas, filename = 'little-artists-studio-artwork.png') {
+        // Vercel Analytics: 画像ダウンロードイベント
+        if (typeof window.va === 'function') {
+            window.va('track', 'Share Image Downloaded', {
+                filename: filename,
+                timestamp: new Date().toISOString()
+            });
+        }
+        
         const link = document.createElement('a');
         link.download = filename;
         link.href = canvas.toDataURL('image/png');
@@ -594,7 +664,16 @@ class PaintApp {
     
     // Xでシェア
     shareOnX(title, description) {
-        const shareText = `🎨 アトリエ マエストロで作品を描きました！\n\n「${title}」\n\n${description.substring(0, 100)}...\n\n#アトリエマエストロ #AI絵画解析 #デジタルアート\n\nhttps://ateliermaestro-painting-ai.vercel.app`;
+        // Vercel Analytics: Xシェアイベント
+        if (typeof window.va === 'function') {
+            window.va('track', 'Shared on X', {
+                titleLength: title.length,
+                descriptionLength: description.length,
+                timestamp: new Date().toISOString()
+            });
+        }
+        
+        const shareText = `🎨 Little Artists Studioで作品を描きました！\n\n「${title}」\n\n${description.substring(0, 100)}...\n\n#LittleArtistsStudio #子どもお絵かき #AI褒めコメント\n\nhttps://little-artists-studio.vercel.app`;
         const encodedText = encodeURIComponent(shareText);
         const twitterUrl = `https://twitter.com/intent/tweet?text=${encodedText}`;
         window.open(twitterUrl, '_blank', 'width=600,height=400');
